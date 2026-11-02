@@ -32,8 +32,14 @@ void loop() {
   aZ = myIMU.readFloatAccelZ();
   Serial.println(aZ);
 
-  // Comment / Uncomment to add delay
+  // Comment / Uncomment to add delay (in millisecond (1 x 10^-3 )
+    // Every 10 ms, take a sample -> Samples at a frequency of 100 hz
   delay(10);
+
+    // 200 hz sample rate
+  // delay (5);
+
+// 
 
 
 }

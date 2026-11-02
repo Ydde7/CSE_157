@@ -3,49 +3,55 @@ import numpy as np
 import csv as csv
 import serial
 import scipy as sci
+import time
 
 # ===========================================
 
 # (!) Using data taken at a previous time with Lab 05 code (!)
 
-# # Identify port type
-# spt = serial.Serial('COM8', baudrate=9600,bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
-# serialString = ""  # For UART data holding
-# iteration = 0      # Limit data before truncating and restarting csv list (max data: 10000 points)
-# cont = True        # Checks if data collection should continue
-# has_data = False   # Set true after run once
+def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv", total_samples=10000, br=9600):
+    """
+    Saves data to the file in "dest"
 
-# dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/filtered.csv"
+        - dest = filepath (string)
+        - total_samples = samples to be recorded (int)
+        - br = baudrate (int) 
 
-# total_samples = 10000
+    """
+    
+    # Identify port type
+    # spt = serial.Serial('COM8', baudrate=9600,bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
+    spt = serial.Serial('COM8', baudrate=br)
+    serialString = ""  # For UART data holding
+    iteration = 0      # Limit data before truncating and restarting csv list (max data: 10000 points)
+    cont = True        # Checks if data collection should continue
+    has_data = False   # Set true after run once
 
-# # Save data to .csv file
-# print("Starting ...")
-# while(cont):
-#     if (iteration > 0):
-#         with open(dest, 'w', newline='') as dataFile:
-#             dataFile.close()
-#         iteration = 0
+    # Save data to .csv file
+    print("Starting ...")
 
-#     with open(dest, 'w', newline='') as dataFile:
-#         while iteration < total_samples: 
-#             serialString = spt.readline()
-#             csvWrite = csv.writer(dataFile, delimiter=',')
+    with open(dest, 'w', newline='') as reset:
+        reset.close()
+    with open(dest, 'a', newline='') as dataFile:
+        while(cont):
 
-#             try:
-#                 val = [serialString.decode("Ascii")]
-#                 csvWrite.writerow([serialString.decode("Ascii")])      
-#                 print(str(serialString.decode("Ascii"))) 
-#                 iteration += 1
-#             except:
-#                 pass
+            while iteration < total_samples: 
+                serialString = spt.readline()
+                csvWrite = csv.writer(dataFile, delimiter=',')
+                try:
+                    val = serialString.decode("Ascii").lstrip("\"'\n ")
+                    csvWrite.writerow(float(val))   
+                    print(val) 
+                    iteration += 1
 
-#             if(iteration % 100 == 0):
-#                   print(f"Iteration: {iteration}")
+                except:
+                    pass
+
+                if(iteration % 100 == 0):
+                    print(f"Iteration: {iteration}")
             
-#         dataFile.close()
-    # cont = False
-    # has_data = True
+            cont = False
+            has_data = True
 
 # ===========================================
 
@@ -78,13 +84,9 @@ def readCSV(filename):
                     data_after.append(float(row[0]))
             return data_after
      
-
-d1 = readSerialCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/data.csv')
-
 def avg_filter(arr, N=3):
     k_avg = np.repeat(1/N, N)
     return np.asarray(np.convolve(arr, k_avg, mode="valid"))
-
 
 def ns(arr, sig=2, N=12):
     """
@@ -117,7 +119,6 @@ def ns(arr, sig=2, N=12):
 
     return averaged / max(averaged)
   
-
 def energyTotal(arr):
      """
     Returns the energy of the input signal
@@ -136,6 +137,14 @@ def thresh(arr, cutoff=0.5):
     oplist = [0, 1]
     return np.select(condlist, oplist)
 
+# ===========================================
+
+sample()
+
+d1 = readSerialCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/data.csv')
+
+print("Graphing ...")
+time.sleep(1)
 
 plt.plot(d1)
 plt.title("Raw Signal")
