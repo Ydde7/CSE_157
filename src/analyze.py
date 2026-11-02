@@ -7,7 +7,7 @@ import time
 
 # ===========================================
 
-# (!) Using data taken at a previous time with Lab 05 code (!)
+# This code assumes the arduino ide is running and sampling IMU data.
 
 def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv", total_samples=10000, br=9600):
     """
@@ -45,7 +45,7 @@ def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Test
                 # To prevent bad writes, we skip out of range values
 
                 if (serialString.isascii()):
-                    val = serialString.decode("Ascii").lstrip("\"'\n\\ ")
+                    val = serialString.decode("Ascii").lstrip("\"'\n\\ ").lstrip("\\r\\n")
                     if (val != ''):
                         csvWrite.writerow([float(val)])   
                     print(val) 
@@ -150,7 +150,8 @@ while (True):
     print("Filename (no .csv): ")
     path = path + input() + ".csv"
     print(path)
-    sample(dest=path, total_samples=100)
+
+    sample(dest=path, total_samples=20000)
 
     print("Record another file? ")
     # 0 = stop | 1 = cont
@@ -158,7 +159,8 @@ while (True):
          break
 
 
-d1 = readCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv')
+# d1 = readCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv')
+d1 = readCSV(path)
 
 print("Graphing ...")
 time.sleep(1)
@@ -181,7 +183,7 @@ plt.show()
 print("Energy = " + str(energyTotal(filtered)) + " Joules")
 dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/energy.csv"
 energy = np.abs(filtered)
-writeCSV(energy, dest=dest)
+writeCSV(energy, dest=path)
 plt.plot(energy)
 plt.title("Energy of Signal")
 plt.xlabel('Sample')
