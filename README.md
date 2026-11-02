@@ -7,3 +7,5 @@ Notes:
 
 - (11/1/26) Updated Code to match Lab 06 (better csv writing and reading)
 
+- (11/1/26) Updated the Serial collection code to make dataset collection easier
+

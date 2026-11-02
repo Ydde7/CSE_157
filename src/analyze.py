@@ -22,11 +22,12 @@ def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Test
     # Identify port type
     # spt = serial.Serial('COM8', baudrate=9600,bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
     spt = serial.Serial('COM8', baudrate=br)
+    spt.close()
+    spt.open()
     serialString = ""  # For UART data holding
     iteration = 0      # Limit data before truncating and restarting csv list (max data: 10000 points)
     cont = True        # Checks if data collection should continue
-    has_data = False   # Set true after run once
-
+    
     # Save data to .csv file
     print("Starting ...")
 
@@ -38,24 +39,29 @@ def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Test
             while iteration < total_samples: 
                 serialString = spt.readline()
                 csvWrite = csv.writer(dataFile, delimiter=',')
-                try:
-                    val = serialString.decode("Ascii").lstrip("\"'\n ")
-                    csvWrite.writerow(float(val))   
+                
+                # try:
+
+                # To prevent bad writes, we skip out of range values
+
+                if (serialString.isascii()):
+                    val = serialString.decode("Ascii").lstrip("\"'\n\\ ")
+                    if (val != ''):
+                        csvWrite.writerow([float(val)])   
                     print(val) 
                     iteration += 1
 
-                except:
-                    pass
+                # except:
+                #     pass
 
                 if(iteration % 100 == 0):
                     print(f"Iteration: {iteration}")
             
             cont = False
-            has_data = True
 
 # ===========================================
 
-def writeCSV(arr, dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/filtered.csv"):
+def writeCSV(arr, dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/filtered.csv"):
     with open(dest, 'w', newline='') as reset:
             reset.close()
     with open(dest, 'a', newline='') as dataFile:
@@ -81,7 +87,8 @@ def readCSV(filename):
      with open(filename, 'r', newline ='') as csvdata:
             csvreader = csv.reader(csvdata, delimiter=',')
             for row in csvreader:
-                    data_after.append(float(row[0]))
+                    if (row[0] != ''):
+                        data_after.append(float(row[0]))
             return data_after
      
 def avg_filter(arr, N=3):
@@ -138,10 +145,20 @@ def thresh(arr, cutoff=0.5):
     return np.select(condlist, oplist)
 
 # ===========================================
+while (True):
+    path = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/dataset/"
+    print("Filename (no .csv): ")
+    path = path + input() + ".csv"
+    print(path)
+    sample(dest=path, total_samples=100)
 
-sample()
+    print("Record another file? ")
+    # 0 = stop | 1 = cont
+    if (int(input()) < 1):
+         break
 
-d1 = readSerialCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Labs/Lab_06/data/data.csv')
+
+d1 = readCSV('C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv')
 
 print("Graphing ...")
 time.sleep(1)
