@@ -12,6 +12,8 @@ import time
 def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/data.csv", total_samples=10000, br=9600):
     """
     Saves data to the file in "dest"
+    
+    This is for a single data file, so loop this to take multiple.
 
         - dest = filepath (string)
         - total_samples = samples to be recorded (int)
@@ -61,7 +63,12 @@ def sample(dest="C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Test
 
 # ===========================================
 
-def writeCSV(arr, dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/filtered.csv"):
+def writeCSV(arr, dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/Code/Testing/CSE_157/data/Misc/filtered.csv"):
+    """
+    This function writes an array of processed data to a csv file.
+
+    """
+
     with open(dest, 'w', newline='') as reset:
             reset.close()
     with open(dest, 'a', newline='') as dataFile:
@@ -73,6 +80,10 @@ def writeCSV(arr, dest = "C:/Users/Ydde7/Desktop/Merced/Sem_F26/CSE 157/Project/
     print("Wrote to CSV")
 
 def readSerialCSV(filename):
+    """
+    Reads the first iteration of our serial data. 
+    Use this only to read data in the "Misc" folder.
+    """
     data_after = [] 
     with open(filename, 'r') as csvdata:
         csvreader = csv.reader(csvdata)
@@ -83,15 +94,25 @@ def readSerialCSV(filename):
     return data_after
 
 def readCSV(filename):
-     data_after = []
-     with open(filename, 'r', newline ='') as csvdata:
-            csvreader = csv.reader(csvdata, delimiter=',')
-            for row in csvreader:
-                    if (row[0] != ''):
-                        data_after.append(float(row[0]))
-            return data_after
+    """
+    Reads a CSV where the format is a single itm list per each row.
+        - filename: Path on the user's computer (string)
+    """
+
+    data_after = []
+    with open(filename, 'r', newline ='') as csvdata:
+        csvreader = csv.reader(csvdata, delimiter=',')
+        for row in csvreader:
+                if (row[0] != ''):
+                    data_after.append(float(row[0]))
+        return data_after
      
 def avg_filter(arr, N=3):
+    """
+    Filter to take an N-windowed average
+        - arr = int or float array
+        - N = window size
+    """
     k_avg = np.repeat(1/N, N)
     return np.asarray(np.convolve(arr, k_avg, mode="valid"))
 
@@ -151,7 +172,7 @@ while (True):
     path = path + input() + ".csv"
     print(path)
 
-    sample(dest=path, total_samples=20000)
+    sample(dest=path, total_samples=3000)
 
     print("Record another file? ")
     # 0 = stop | 1 = cont

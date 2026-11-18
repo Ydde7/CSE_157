@@ -24,9 +24,7 @@ void setup() {
   }
 }
 
-// Note the example uploads data in chunks separated  by motion events.
-  // The trigger is a comparison between samples taken due to a motion event (decided by threshold value)
-  // Our code should sample at regular 10ms intervals reguardless of motion.
+// Update with batching 
 void loop() {
   
   aZ = myIMU.readFloatAccelZ();
@@ -34,6 +32,7 @@ void loop() {
 
   // Comment / Uncomment to add delay (in millisecond (1 x 10^-3 )
     // Every 10 ms, take a sample -> Samples at a frequency of 100 hz
+
   delay(10);
 
     // 200 hz sample rate
